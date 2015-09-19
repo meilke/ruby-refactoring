@@ -2,15 +2,15 @@ require_relative 'combiner'
 
 class MergeAndCombine
 
-  def initialize(keyword_unique_id)
+  def initialize(keyword_unique_id, modifier)
     @keyword_unique_id = keyword_unique_id
+    @modifier = modifier
   end
 
-  def modify(input_enumerator)
-    
+  def process(*input_enumerator)
     combiner = Combiner.new do |value|
       value[@keyword_unique_id]
-    end.combine(input_enumerator)
+    end.combine(*input_enumerator)
 
     Enumerator.new do |yielder|
       while true
@@ -28,6 +28,12 @@ class MergeAndCombine
   private
 
   def combine_values(hash)
+    @modifier.each do |m|
+      begin
+        m.modify(hash)
+      rescue
+      end
+    end
     hash
   end
 

@@ -2,6 +2,20 @@ require File.expand_path('spec_helper', File.dirname(__FILE__))
 require 'csv'
 require 'merge_and_combine'
 
+class MyModifier
+
+  COLUMNS = [
+    'Clicks'
+  ]
+
+  def modify(hash)
+    COLUMNS.each do |key|
+      hash[key] = hash[key].last
+    end
+  end
+
+end
+
 def create_rows
   Enumerator.new do |yielder|
     yielder.yield(CSV::Row.new(['Keyword Unique ID', 'Clicks'], [], true))
@@ -22,17 +36,31 @@ RSpec::Matchers.define :return_modified_elements do |expected|
 end
 
 describe MergeAndCombine do
-  let(:merge_and_combine) { MergeAndCombine.new('Keyword Unique ID') }
+  let(:modifier) { [] }
+  let(:keyword_unique_id) { 'Keyword Unique ID' }
 
   context '#modify' do
-    subject { merge_and_combine.modify(create_rows()) }
+    subject { MergeAndCombine.new(keyword_unique_id, modifier).process(create_rows(), create_rows()) }
   
-    it do
-      should return_modified_elements [
-        {'Keyword Unique ID' => [nil], 'Clicks' => [nil]},
-        {'Keyword Unique ID' => ['4'], 'Clicks' => [5]},
-        {'Keyword Unique ID' => ['44'], 'Clicks' => [55]}
-      ]
+    context 'with no modifiers' do
+      it do
+        should return_modified_elements [
+          {'Keyword Unique ID' => [nil, nil], 'Clicks' => [nil, nil]},
+          {'Keyword Unique ID' => ['4', '4'], 'Clicks' => [5, 5]},
+          {'Keyword Unique ID' => ['44', '44'], 'Clicks' => [55, 55]}
+        ]
+      end
+    end
+
+    context 'with modifier on Clicks column' do
+      let(:modifier) { [ MyModifier.new ] }
+      it do
+        should return_modified_elements [
+          {'Keyword Unique ID' => [nil, nil], 'Clicks' => nil},
+          {'Keyword Unique ID' => ['4', '4'], 'Clicks' => 5},
+          {'Keyword Unique ID' => ['44', '44'], 'Clicks' => 55}
+        ]
+      end
     end
 
   end
