@@ -58,7 +58,7 @@ describe 'Modifiers' do
     end
 
     context 'does some re-formatting of the first value and in the end it is the same value (weird...)' do
-      it { should eq({'Account ID' => '0,1'}) }
+      it { should eq({'Account ID' => '0,'}) }
     end
   end
 
