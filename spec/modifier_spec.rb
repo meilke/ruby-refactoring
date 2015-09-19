@@ -48,4 +48,18 @@ describe 'Modifiers' do
     end
   end
 
+  context FloatValueModifier do
+    let(:hash) { {'Account ID' => ['0,1', '0,2', '0,3']} }
+    subject { FloatValueModifier.new(columns).modify(hash) }
+  
+    context 'leaves unconfigured columns untouched' do
+      let(:columns) { ['something else'] }
+      it { should eq({'Account ID' => ['0,1', '0,2', '0,3']}) }
+    end
+
+    context 'does some re-formatting and in the end it is the same value (weird...)' do
+      it { should eq({'Account ID' => '0,1'}) }
+    end
+  end
+
 end
