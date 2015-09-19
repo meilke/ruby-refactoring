@@ -20,6 +20,7 @@ class BaseModifier
     @columns.each do |key|
       modify_inner(hash, key) if hash[key]
     end
+    hash
   end
 
 end
