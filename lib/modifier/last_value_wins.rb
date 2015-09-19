@@ -1,4 +1,6 @@
-class LastValueWinsModifier
+require_relative 'base_modifier'
+
+class LastValueWinsModifier < BaseModifier
 
   LAST_VALUE_WINS = [
     'Account ID',
@@ -19,10 +21,8 @@ class LastValueWinsModifier
     'KEYWORD'
   ]
 
-  def modify(hash)
-    LAST_VALUE_WINS.each do |key|
-      hash[key] = hash[key].last
-    end
+  def modify_inner(hash, key)
+    hash[key] = hash[key].last
   end
 
 end

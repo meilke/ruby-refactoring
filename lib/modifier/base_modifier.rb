@@ -11,5 +11,15 @@ class Float
 end
 
 class BaseModifier
+  
+  def initialize(columns)
+    @columns = columns
+  end
+
+  def modify(hash)
+    @columns.each do |key|
+      modify_inner(hash, key) if hash[key]
+    end
+  end
 
 end
