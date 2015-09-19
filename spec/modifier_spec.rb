@@ -34,4 +34,18 @@ describe 'Modifiers' do
     end
   end
 
+  context IntValuesModifier do
+    let(:hash) { {'Account ID' => [1, 2, 3]} }
+    subject { IntValuesModifier.new(columns).modify(hash) }
+  
+    context 'leaves unconfigured columns untouched' do
+      let(:columns) { ['something else'] }
+      it { should eq({'Account ID' => [1, 2, 3]}) }
+    end
+
+    context 'converts the first element to string (weird...)' do
+      it { should eq({'Account ID' => '1'}) }
+    end
+  end
+
 end
