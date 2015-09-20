@@ -45,8 +45,8 @@ class Modifier
       LastRealValueWinsModifier.new(LAST_REAL_VALUE_WINS),
       IntValuesModifier.new(INT_VALUES),
       FloatValueModifier.new(FLOAT_VALUES),
-      CancellationFactorModifier.new(@cancellation_factor, CANCELLATION_VALUES),
-      CancellationSaleAmountFactorModifier.new(@cancellation_factor, @saleamount_factor, CANCELLATION_SALE_AMOUNT_VALUES)
+      FactorModifier.new(@cancellation_factor, CANCELLATION_VALUES),
+      FactorModifier.new(@cancellation_factor * @saleamount_factor, CANCELLATION_SALE_AMOUNT_VALUES)
     ]
 
     merger = MergeAndCombine.new(KEYWORD_UNIQUE_ID, modifiers).process(input_enumerator)
