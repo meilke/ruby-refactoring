@@ -21,7 +21,7 @@ class FileOutput < FileBase
       CSV.open(file_name + "_#{file_index}.txt", 'wb', DEFAULT_CSV_OPTIONS) do |csv|
         headers_written = false
         line_count = 0
-        while line_count < lines_per_file
+        while line_count <= lines_per_file
           begin
             merged = enumerator.next
             if not headers_written
