@@ -1,23 +1,8 @@
 require_relative 'lib/merge_and_combine'
+require_relative 'lib/file/file_input'
+require_relative 'lib/file/file_output'
 Dir['./lib/modifier/*.rb'].each {|file| require file }
 require 'csv'
-require 'date'
-
-def latest(name)
-  files = Dir["#{ ENV["HOME"] }/workspace/*#{name}*.txt"]
-
-  files.sort_by! do |file|
-    last_date = /\d+-\d+-\d+_[[:alpha:]]+\.txt$/.match file
-    last_date = last_date.to_s.match /\d+-\d+-\d+/
-
-    date = DateTime.parse(last_date.to_s)
-    date
-  end
-
-  throw RuntimeError if files.empty?
-
-  files.last
-end
 
 class Modifier
 
@@ -36,9 +21,16 @@ class Modifier
     @cancellation_factor = cancellation_factor
   end
 
-  def modify(output, input)
-    input = sort(input)
-    input_enumerator = lazy_read(input)
+  def modify(pattern, sorting_column)
+    
+    file_input = FileInput.new
+    file_output = FileOutput.new
+
+    input = file_input.latest_file_matching(pattern)
+    output = input
+
+    input = file_output.sort_by(input, sorting_column)
+    input_enumerator = file_input.lazy_read(input)
 
     modifiers = [
       LastValueWinsModifier.new(LAST_VALUE_WINS),
@@ -77,47 +69,11 @@ class Modifier
       end
     end
   end
-
-  private
-
-  DEFAULT_CSV_OPTIONS = { :col_sep => "\t", :headers => :first_row }
-
-  def parse(file)
-    CSV.read(file, DEFAULT_CSV_OPTIONS)
-  end
-
-  def lazy_read(file)
-    Enumerator.new do |yielder|
-      CSV.foreach(file, DEFAULT_CSV_OPTIONS) do |row|
-        yielder.yield(row)
-      end
-    end
-  end
-
-  def write(content, headers, output)
-    CSV.open(output, "wb", { :col_sep => "\t", :headers => :first_row, :row_sep => "\r\n" }) do |csv|
-      csv << headers
-      content.each do |row|
-        csv << row
-      end
-    end
-  end
-
-  def sort(file)
-    output = "#{file}.sorted"
-    content_as_table = parse(file)
-    headers = content_as_table.headers
-    index_of_key = headers.index('Clicks')
-    content = content_as_table.sort_by { |a| -a[index_of_key].to_i }
-    write(content, headers, output)
-    return output
-  end
 end
 
-modified = input = latest('project_2012-07-27_2012-10-10_performancedata')
 modification_factor = 1
 cancellaction_factor = 0.4
 modifier = Modifier.new(modification_factor, cancellaction_factor)
-modifier.modify(modified, input)
+modified = modifier.modify('project_2012-07-27_2012-10-10_performancedata', 'Clicks')
 
-puts "DONE modifying"
+puts 'DONE modifying'
