@@ -4,19 +4,18 @@ require 'date'
 
 class FileInput < FileBase
   
+  DATE_PATTERN = /\d+-\d+-\d+/
+
   def initialize(base_path=nil)
     @base_path = base_path || ENV['HOME']
   end
 
-  def latest_file_matching(name)
-    files = Dir["#{@base_path}/*#{name}*.txt"]
+  def latest_file_matching(name_part, pattern)
+    files = Dir["#{@base_path}/*#{name_part}*.txt"].select{ |file| file[pattern] }
 
     files.sort_by! do |file|
-      last_date = /\d+-\d+-\d+_[[:alpha:]]+\.txt$/.match file
-      last_date = last_date.to_s.match /\d+-\d+-\d+/
-
-      date = DateTime.parse(last_date.to_s)
-      date
+      last_date = file.to_s.match DATE_PATTERN
+      DateTime.parse(last_date.to_s)
     end
 
     throw RuntimeError if files.empty?

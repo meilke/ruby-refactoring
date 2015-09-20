@@ -19,12 +19,12 @@ class Modifier
     @cancellation_factor = cancellation_factor
   end
 
-  def modify(pattern, sorting_column)
+  def modify(name_part, pattern, sorting_column)
     
     file_input = FileInput.new
     file_output = FileOutput.new
 
-    input = file_input.latest_file_matching(pattern)
+    input = file_input.latest_file_matching(name_part, pattern)
     output = input
 
     input = file_output.sort_by(input, sorting_column)
@@ -49,6 +49,6 @@ end
 modification_factor = 1
 cancellaction_factor = 0.4
 modifier = Modifier.new(modification_factor, cancellaction_factor)
-modified = modifier.modify('project_2012-07-27_2012-10-10_performancedata', 'Clicks')
+modified = modifier.modify('project_2012-07-27_2012-10-10_performancedata', /\d+-\d+-\d+_[[:alpha:]]+\.txt$/, 'Clicks')
 
 puts 'DONE modifying'

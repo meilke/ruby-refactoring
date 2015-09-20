@@ -38,4 +38,15 @@ describe 'File operations' do
 
   end
 
+  context FileInput do
+    
+    context 'gets latest file matching pattern' do
+      it do
+        latest = FileInput.new('workspace').latest_file_matching('project_2012-07-27_2012-10-10_performancedata', /\d+-\d+-\d+_[[:alpha:]]+\.txt$/)
+        expect(latest).to eq('workspace/project_2012-07-27_2012-10-10_performancedata.txt')
+      end
+    end
+
+  end
+
 end
