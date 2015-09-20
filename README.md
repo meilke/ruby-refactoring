@@ -1,1 +1,1 @@
-[![Build Status](https://api.travis-ci.org/meilke/ruby-refactoring.png)](https://travis-ci.org/meilke/ruby-refactoring)
+[![Build Status](https://travis-ci.org/meilke/ruby-refactoring.svg?branch=master)](https://travis-ci.org/meilke/ruby-refactoring)
