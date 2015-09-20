@@ -14,8 +14,6 @@ class Modifier
   CANCELLATION_VALUES = ['number of commissions']
   CANCELLATION_SALE_AMOUNT_VALUES = ['Commission Value', 'ACCOUNT - Commission Value', 'CAMPAIGN - Commission Value', 'BRAND - Commission Value', 'BRAND+CATEGORY - Commission Value', 'ADGROUP - Commission Value', 'KEYWORD - Commission Value']
 
-  LINES_PER_FILE = 120000
-
   def initialize(saleamount_factor, cancellation_factor)
     @saleamount_factor = saleamount_factor
     @cancellation_factor = cancellation_factor
@@ -43,31 +41,8 @@ class Modifier
 
     merger = MergeAndCombine.new(KEYWORD_UNIQUE_ID, modifiers).process(input_enumerator)
 
-    done = false
-    file_index = 0
-    file_name = output.gsub('.txt', '')
-    while not done do
-      CSV.open(file_name + "_#{file_index}.txt", "wb", { :col_sep => "\t", :headers => :first_row, :row_sep => "\r\n" }) do |csv|
-        headers_written = false
-        line_count = 0
-        while line_count < LINES_PER_FILE
-          begin
-            merged = merger.next
-            if not headers_written
-              csv << merged.keys
-              headers_written = true
-              line_count +=1
-            end
-            csv << merged
-            line_count +=1
-          rescue StopIteration
-            done = true
-            break
-          end
-        end
-        file_index += 1
-      end
-    end
+    file_output.write_enumerator_paged(merger, output)
+
   end
 end
 
