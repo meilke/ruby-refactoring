@@ -1,1 +1,3 @@
 [![Build Status](https://travis-ci.org/meilke/ruby-refactoring.svg?branch=master)](https://travis-ci.org/meilke/ruby-refactoring)
+[![Code Climate](https://codeclimate.com/github/meilke/ruby-refactoring/badges/gpa.svg)](https://codeclimate.com/github/meilke/ruby-refactoring)
+[![Test Coverage](https://codeclimate.com/github/meilke/ruby-refactoring/badges/coverage.svg)](https://codeclimate.com/github/meilke/ruby-refactoring/coverage)
