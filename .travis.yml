@@ -1,5 +1,9 @@
 language: ruby
 install:
-  - gem install rspec
+  - gem install bundler
+  - bundle install
 rvm:
   - 2.1.5
+addons:
+  code_climate:
+    repo_token: 6f6f072061cfe3e0e107d4879cea4b77f9a31bb7fe3862b55dc5809a89b834d3
